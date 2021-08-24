@@ -14,31 +14,35 @@
       "properties": {
         "displayName": "GC - TLS Version .NET Auditing",
         "policyType": "Custom",
-        "mode": "All",
+        "mode": "Indexed",
         "description": "Reports on allowed TLS settings .NET applications for servers.",
         "metadata": {
+          "version": "1.0.0",
           "category": "Guest Configuration",
           "guestConfiguration": {
             "name": "TLSDotNetSettings",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/TLSDotNetSettings.zip?sv=2019-07-07&sr=b&sig=kcxBVmVzpTfaH74bU%2F9Ah3Ro2QsU3lTz1qB7EbaxTug%3D&st=2021-08-22T11%3A35%3A17Z&se=2024-08-22T11%3A35%3A17Z&sp=rl",
-            "contentHash": "CDCE368D1071B0B92A3FBA7A68F903AF377151738AFA755B502DBBEDDCF6C2B6",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/TLSDotNetSettings.zip?sv=2019-07-07&sr=b&sig=H9xlDQP43el%2BAPNdqf7X%2FNe5kLFZN1EetJ6je3z4RnY%3D&st=2021-08-24T13%3A31%3A01Z&se=2024-08-24T13%3A31%3A01Z&sp=rl",
+            "contentHash": "D27469DC1504C4326A4E164AD9C7F3425C3C53B09A039026718D6AA4B66F6164",
             "configurationParameter": {}
-          }
+          },
+          "requiredProviders": [
+            "Microsoft.GuestConfiguration"
+          ]
         },
         "parameters": {
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {
@@ -222,17 +226,109 @@
             ]
           },
           "then": {
-            "effect": "auditIfNotExists",
+            "effect": "deployIfNotExists",
             "details": {
               "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
               "name": "TLSDotNetSettings",
+              "roleDefinitionIds": [
+                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+              ],
               "existenceCondition": {
                 "allOf": [
+                  {
+                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/contentHash",
+                    "equals": "D27469DC1504C4326A4E164AD9C7F3425C3C53B09A039026718D6AA4B66F6164"
+                  },
                   {
                     "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
                     "equals": "Compliant"
                   }
                 ]
+              },
+              "deployment": {
+                "properties": {
+                  "mode": "incremental",
+                  "parameters": {
+                    "vmName": {
+                      "value": "[field('name')]"
+                    },
+                    "location": {
+                      "value": "[field('location')]"
+                    },
+                    "type": {
+                      "value": "[field('type')]"
+                    },
+                    "configurationName": {
+                      "value": "TLSDotNetSettings"
+                    },
+                    "contentUri": {
+                      "value": "https://cloudsoegcpol.blob.core.windows.net/guest-config/TLSDotNetSettings.zip?sv=2019-07-07&sr=b&sig=H9xlDQP43el%2BAPNdqf7X%2FNe5kLFZN1EetJ6je3z4RnY%3D&st=2021-08-24T13%3A31%3A01Z&se=2024-08-24T13%3A31%3A01Z&sp=rl"
+                    },
+                    "contentHash": {
+                      "value": "D27469DC1504C4326A4E164AD9C7F3425C3C53B09A039026718D6AA4B66F6164"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                      "vmName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "configurationName": {
+                        "type": "string"
+                      },
+                      "contentUri": {
+                        "type": "string"
+                      },
+                      "contentHash": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "condition": "[equals(toLower(parameters('type')), toLower('Microsoft.Compute/virtualMachines'))]",
+                        "apiVersion": "2018-11-20",
+                        "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
+                        "location": "[parameters('location')]",
+                        "properties": {
+                          "guestConfiguration": {
+                            "name": "[parameters('configurationName')]",
+                            "version": "1.0.0",
+                            "contentUri": "[parameters('contentUri')]",
+                            "contentHash": "[parameters('contentHash')]",
+                            "assignmentType": "ApplyAndMonitor",
+                            "configurationParameter": []
+                          }
+                        }
+                      },
+                      {
+                        "condition": "[equals(toLower(parameters('type')), toLower('microsoft.hybridcompute/machines'))]",
+                        "apiVersion": "2018-11-20",
+                        "type": "Microsoft.HybridCompute/machines/providers/guestConfigurationAssignments",
+                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
+                        "location": "[parameters('location')]",
+                        "properties": {
+                          "guestConfiguration": {
+                            "name": "[parameters('configurationName')]",
+                            "contentUri": "[parameters('contentUri')]",
+                            "contentHash": "[parameters('contentHash')]",
+                            "assignmentType": "ApplyAndMonitor",
+                            "version": "1.0.0",
+                            "configurationParameter": []
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
               }
             }
           }

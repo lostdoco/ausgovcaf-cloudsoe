@@ -14,31 +14,35 @@
       "properties": {
         "displayName": "Audit Windows autorun settings",
         "policyType": "Custom",
-        "mode": "All",
+        "mode": "Indexed",
         "description": "Audit if the Windows autorun settings have been configured to disable autorun.",
         "metadata": {
+          "version": "1.0.0",
           "category": "Guest Configuration",
           "guestConfiguration": {
             "name": "WindowsDisableAutorun",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/WindowsDisableAutorun.zip?sv=2019-07-07&sr=b&sig=XqfUMwzKtdFYEsR2tfimF7BRNPZQkLJZy24PFGEXyT4%3D&st=2021-08-22T11%3A36%3A11Z&se=2024-08-22T11%3A36%3A11Z&sp=rl",
-            "contentHash": "335DF281C5713A33C526D8979F4D269A7B7D15FD3ED33AF841AC2B7629D520C7",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/WindowsDisableAutorun.zip?sv=2019-07-07&sr=b&sig=IpbJHaUaOVkM5qg1%2BhEqcUmOin80TvT5bKfHx9WatL8%3D&st=2021-08-24T13%3A32%3A08Z&se=2024-08-24T13%3A32%3A08Z&sp=rl",
+            "contentHash": "B95B698A4DBCF47C064CBEE392C55B4CE3D909261A547A5B7283B2A3BD338999",
             "configurationParameter": {}
-          }
+          },
+          "requiredProviders": [
+            "Microsoft.GuestConfiguration"
+          ]
         },
         "parameters": {
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {
@@ -222,17 +226,109 @@
             ]
           },
           "then": {
-            "effect": "auditIfNotExists",
+            "effect": "deployIfNotExists",
             "details": {
               "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
               "name": "WindowsDisableAutorun",
+              "roleDefinitionIds": [
+                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+              ],
               "existenceCondition": {
                 "allOf": [
+                  {
+                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/contentHash",
+                    "equals": "B95B698A4DBCF47C064CBEE392C55B4CE3D909261A547A5B7283B2A3BD338999"
+                  },
                   {
                     "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
                     "equals": "Compliant"
                   }
                 ]
+              },
+              "deployment": {
+                "properties": {
+                  "mode": "incremental",
+                  "parameters": {
+                    "vmName": {
+                      "value": "[field('name')]"
+                    },
+                    "location": {
+                      "value": "[field('location')]"
+                    },
+                    "type": {
+                      "value": "[field('type')]"
+                    },
+                    "configurationName": {
+                      "value": "WindowsDisableAutorun"
+                    },
+                    "contentUri": {
+                      "value": "https://cloudsoegcpol.blob.core.windows.net/guest-config/WindowsDisableAutorun.zip?sv=2019-07-07&sr=b&sig=IpbJHaUaOVkM5qg1%2BhEqcUmOin80TvT5bKfHx9WatL8%3D&st=2021-08-24T13%3A32%3A08Z&se=2024-08-24T13%3A32%3A08Z&sp=rl"
+                    },
+                    "contentHash": {
+                      "value": "B95B698A4DBCF47C064CBEE392C55B4CE3D909261A547A5B7283B2A3BD338999"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                      "vmName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "configurationName": {
+                        "type": "string"
+                      },
+                      "contentUri": {
+                        "type": "string"
+                      },
+                      "contentHash": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "condition": "[equals(toLower(parameters('type')), toLower('Microsoft.Compute/virtualMachines'))]",
+                        "apiVersion": "2018-11-20",
+                        "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
+                        "location": "[parameters('location')]",
+                        "properties": {
+                          "guestConfiguration": {
+                            "name": "[parameters('configurationName')]",
+                            "version": "1.0.0",
+                            "contentUri": "[parameters('contentUri')]",
+                            "contentHash": "[parameters('contentHash')]",
+                            "assignmentType": "ApplyAndMonitor",
+                            "configurationParameter": []
+                          }
+                        }
+                      },
+                      {
+                        "condition": "[equals(toLower(parameters('type')), toLower('microsoft.hybridcompute/machines'))]",
+                        "apiVersion": "2018-11-20",
+                        "type": "Microsoft.HybridCompute/machines/providers/guestConfigurationAssignments",
+                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
+                        "location": "[parameters('location')]",
+                        "properties": {
+                          "guestConfiguration": {
+                            "name": "[parameters('configurationName')]",
+                            "contentUri": "[parameters('contentUri')]",
+                            "contentHash": "[parameters('contentHash')]",
+                            "assignmentType": "ApplyAndMonitor",
+                            "version": "1.0.0",
+                            "configurationParameter": []
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
               }
             }
           }

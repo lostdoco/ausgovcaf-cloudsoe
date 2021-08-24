@@ -14,31 +14,35 @@
       "properties": {
         "displayName": "GC - Windows Server 2016 Baseline",
         "policyType": "Custom",
-        "mode": "All",
+        "mode": "Indexed",
         "description": "Windows Server 2016 Baseline converted from SCT GPO.",
         "metadata": {
+          "version": "1.0.0",
           "category": "Guest Configuration",
           "guestConfiguration": {
             "name": "WindowsServer2016Baseline",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/WindowsServer2016Baseline.zip?sv=2019-07-07&sr=b&sig=YTz4sBqd%2FKA9QeVRze6%2BiBM2oqxIqOX6cX5whhSLHDA%3D&st=2021-08-22T11%3A36%3A39Z&se=2024-08-22T11%3A36%3A39Z&sp=rl",
-            "contentHash": "E9538E110FA763FB622AEB39735DCC2948B1D2AF46F28A921485F3F2B9EC3703",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/WindowsServer2016Baseline.zip?sv=2019-07-07&sr=b&sig=3WN6ICf%2Bc4oVCE%2BXZTNbhFZ9c%2BzYuX8VHvVkK9%2Bmyok%3D&st=2021-08-24T13%3A32%3A50Z&se=2024-08-24T13%3A32%3A50Z&sp=rl",
+            "contentHash": "51E558A72C8FB51EFEFBB9CF3E6AC1D09033FC8702D4D18238EFD1FCA726E8E9",
             "configurationParameter": {}
-          }
+          },
+          "requiredProviders": [
+            "Microsoft.GuestConfiguration"
+          ]
         },
         "parameters": {
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {
@@ -222,17 +226,109 @@
             ]
           },
           "then": {
-            "effect": "auditIfNotExists",
+            "effect": "deployIfNotExists",
             "details": {
               "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
               "name": "WindowsServer2016Baseline",
+              "roleDefinitionIds": [
+                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+              ],
               "existenceCondition": {
                 "allOf": [
+                  {
+                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/contentHash",
+                    "equals": "51E558A72C8FB51EFEFBB9CF3E6AC1D09033FC8702D4D18238EFD1FCA726E8E9"
+                  },
                   {
                     "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
                     "equals": "Compliant"
                   }
                 ]
+              },
+              "deployment": {
+                "properties": {
+                  "mode": "incremental",
+                  "parameters": {
+                    "vmName": {
+                      "value": "[field('name')]"
+                    },
+                    "location": {
+                      "value": "[field('location')]"
+                    },
+                    "type": {
+                      "value": "[field('type')]"
+                    },
+                    "configurationName": {
+                      "value": "WindowsServer2016Baseline"
+                    },
+                    "contentUri": {
+                      "value": "https://cloudsoegcpol.blob.core.windows.net/guest-config/WindowsServer2016Baseline.zip?sv=2019-07-07&sr=b&sig=3WN6ICf%2Bc4oVCE%2BXZTNbhFZ9c%2BzYuX8VHvVkK9%2Bmyok%3D&st=2021-08-24T13%3A32%3A50Z&se=2024-08-24T13%3A32%3A50Z&sp=rl"
+                    },
+                    "contentHash": {
+                      "value": "51E558A72C8FB51EFEFBB9CF3E6AC1D09033FC8702D4D18238EFD1FCA726E8E9"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                      "vmName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "configurationName": {
+                        "type": "string"
+                      },
+                      "contentUri": {
+                        "type": "string"
+                      },
+                      "contentHash": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "condition": "[equals(toLower(parameters('type')), toLower('Microsoft.Compute/virtualMachines'))]",
+                        "apiVersion": "2018-11-20",
+                        "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
+                        "location": "[parameters('location')]",
+                        "properties": {
+                          "guestConfiguration": {
+                            "name": "[parameters('configurationName')]",
+                            "version": "1.0.0",
+                            "contentUri": "[parameters('contentUri')]",
+                            "contentHash": "[parameters('contentHash')]",
+                            "assignmentType": "ApplyAndMonitor",
+                            "configurationParameter": []
+                          }
+                        }
+                      },
+                      {
+                        "condition": "[equals(toLower(parameters('type')), toLower('microsoft.hybridcompute/machines'))]",
+                        "apiVersion": "2018-11-20",
+                        "type": "Microsoft.HybridCompute/machines/providers/guestConfigurationAssignments",
+                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
+                        "location": "[parameters('location')]",
+                        "properties": {
+                          "guestConfiguration": {
+                            "name": "[parameters('configurationName')]",
+                            "contentUri": "[parameters('contentUri')]",
+                            "contentHash": "[parameters('contentHash')]",
+                            "assignmentType": "ApplyAndMonitor",
+                            "version": "1.0.0",
+                            "configurationParameter": []
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
               }
             }
           }

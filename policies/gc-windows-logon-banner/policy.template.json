@@ -14,21 +14,25 @@
       "properties": {
         "displayName": "GC - Windows logon Banner",
         "policyType": "Custom",
-        "mode": "All",
+        "mode": "Indexed",
         "description": "Audit if the Windows logon banner complies with the specified banner text and title.",
         "metadata": {
+          "version": "1.0.0",
           "category": "Guest Configuration",
           "guestConfiguration": {
             "name": "WindowsLogonBanner",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/WindowsLogonBanner.zip?sv=2019-07-07&sr=b&sig=7s8K9TVsErHGOXlny95N4eMH5pcEBljAbLnzwLd3y6Y%3D&st=2021-08-22T11%3A36%3A25Z&se=2024-08-22T11%3A36%3A25Z&sp=rl",
-            "contentHash": "40AA7A2C14DBF40B9C791C9A4262F4668B1CA282F9D9DAEE7ADC9D1FE619B382",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/WindowsLogonBanner.zip?sv=2019-07-07&sr=b&sig=GEhWAE94zx1SZVHqj8mavVYt%2FnVa%2BRs3Yb3EU%2FrI0vQ%3D&st=2021-08-24T13%3A32%3A30Z&se=2024-08-24T13%3A32%3A30Z&sp=rl",
+            "contentHash": "E5FB3D6B379C8E6BC69254C7C34F733ECFA52C43B60BD024184C716D17308480",
             "configurationParameter": {
               "BannerTitle": "[Registry]Ensure Windows logon banner title is set correctly;ValueData",
               "BannerText": "[Registry]Ensure Windows logon banner text is set correctly;ValueData"
             }
-          }
+          },
+          "requiredProviders": [
+            "Microsoft.GuestConfiguration"
+          ]
         },
         "parameters": {
           "BannerTitle": {
@@ -48,16 +52,16 @@
             "type": "string"
           },
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {
@@ -241,21 +245,143 @@
             ]
           },
           "then": {
-            "effect": "auditIfNotExists",
+            "effect": "deployIfNotExists",
             "details": {
               "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
               "name": "WindowsLogonBanner",
+              "roleDefinitionIds": [
+                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+              ],
               "existenceCondition": {
                 "allOf": [
                   {
-                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
-                    "equals": "Compliant"
+                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/parameterHash",
+                    "equals": "[base64(concat('[Registry]Ensure Windows logon banner title is set correctly;ValueData', '=', parameters('BannerTitle'), ',', '[Registry]Ensure Windows logon banner text is set correctly;ValueData', '=', parameters('BannerText')))]"
                   },
                   {
-                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/parameterHash",
-                    "equals": "[[base64(concat('[Registry]Ensure Windows logon banner title is set correctly;ValueData', '=', parameters('BannerTitle'), ',', '[Registry]Ensure Windows logon banner text is set correctly;ValueData', '=', parameters('BannerText')))]"
+                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/contentHash",
+                    "equals": "[E5FB3D6B379C8E6BC69254C7C34F733ECFA52C43B60BD024184C716D17308480"
+                  },
+                  {
+                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
+                    "equals": "Compliant"
                   }
                 ]
+              },
+              "deployment": {
+                "properties": {
+                  "mode": "incremental",
+                  "parameters": {
+                    "vmName": {
+                      "value": "[field('name')]"
+                    },
+                    "location": {
+                      "value": "[field('location')]"
+                    },
+                    "type": {
+                      "value": "[field('type')]"
+                    },
+                    "configurationName": {
+                      "value": "WindowsLogonBanner"
+                    },
+                    "contentUri": {
+                      "value": "https://cloudsoegcpol.blob.core.windows.net/guest-config/WindowsLogonBanner.zip?sv=2019-07-07&sr=b&sig=GEhWAE94zx1SZVHqj8mavVYt%2FnVa%2BRs3Yb3EU%2FrI0vQ%3D&st=2021-08-24T13%3A32%3A30Z&se=2024-08-24T13%3A32%3A30Z&sp=rl"
+                    },
+                    "contentHash": {
+                      "value": "E5FB3D6B379C8E6BC69254C7C34F733ECFA52C43B60BD024184C716D17308480"
+                    },
+                    "BannerTitle": {
+                      "value": "[parameters('BannerTitle')]"
+                    },
+                    "BannerText": {
+                      "value": "[parameters('BannerText')]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                      "vmName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "configurationName": {
+                        "type": "string"
+                      },
+                      "contentUri": {
+                        "type": "string"
+                      },
+                      "contentHash": {
+                        "type": "string"
+                      },
+                      "BannerTitle": {
+                        "type": "string"
+                      },
+                      "BannerText": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "condition": "[equals(toLower(parameters('type')), toLower('Microsoft.Compute/virtualMachines'))]",
+                        "apiVersion": "2018-11-20",
+                        "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
+                        "location": "[parameters('location')]",
+                        "properties": {
+                          "guestConfiguration": {
+                            "name": "[parameters('configurationName')]",
+                            "version": "1.0.0",
+                            "contentUri": "[parameters('contentUri')]",
+                            "contentHash": "[parameters('contentHash')]",
+                            "assignmentType": "ApplyAndMonitor",
+                            "configurationParameter": [
+                              {
+                                "name": "[Registry]Ensure Windows logon banner title is set correctly;ValueData",
+                                "value": "[parameters('BannerTitle')]"
+                              },
+                              {
+                                "name": "[Registry]Ensure Windows logon banner text is set correctly;ValueData",
+                                "value": "[parameters('BannerText')]"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      {
+                        "condition": "[equals(toLower(parameters('type')), toLower('microsoft.hybridcompute/machines'))]",
+                        "apiVersion": "2018-11-20",
+                        "type": "Microsoft.HybridCompute/machines/providers/guestConfigurationAssignments",
+                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
+                        "location": "[parameters('location')]",
+                        "properties": {
+                          "guestConfiguration": {
+                            "name": "[parameters('configurationName')]",
+                            "contentUri": "[parameters('contentUri')]",
+                            "contentHash": "[parameters('contentHash')]",
+                            "assignmentType": "ApplyAndMonitor",
+                            "version": "1.0.0",
+                            "configurationParameter": [
+                              {
+                                "name": "[Registry]Ensure Windows logon banner title is set correctly;ValueData",
+                                "value": "[parameters('BannerTitle')]"
+                              },
+                              {
+                                "name": "[Registry]Ensure Windows logon banner text is set correctly;ValueData",
+                                "value": "[parameters('BannerText')]"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
               }
             }
           }
