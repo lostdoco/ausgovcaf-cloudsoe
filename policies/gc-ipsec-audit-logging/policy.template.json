@@ -22,23 +22,23 @@
             "name": "IPsecAuditLogging",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/IPsecAuditLogging.zip?sv=2020-04-08&st=2021-10-14T00%3A09%3A23Z&se=2024-10-14T00%3A09%3A23Z&sr=b&sp=rl&sig=RPy21sgeHbvRHMV2ZvkK347JMAwYz1N0ZJR%2Bqe3wX6Q%3D",
-            "contentHash": "24D0E0467B751C48048FC2BC6CDCE8713E13864BB231C40041A01ED9CE1DD0AB",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/IPsecAuditLogging.zip?sv=2020-04-08&st=2021-10-14T00%3A36%3A18Z&se=2024-10-14T00%3A36%3A18Z&sr=b&sp=rl&sig=dKQjb8w2B%2BhAKLtJPf1uf9x1lvmiTiO9o8lCgBUmk%2FM%3D",
+            "contentHash": "00DC442C113625EDDAFDAC78206BCA42B5E209232AB1E8E8E0573FBBCD2C384B",
             "configurationParameter": {}
           }
         },
         "parameters": {
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {

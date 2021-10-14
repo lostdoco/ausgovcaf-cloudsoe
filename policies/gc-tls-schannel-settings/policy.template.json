@@ -22,23 +22,23 @@
             "name": "TLSSchannelSettings",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/TLSSchannelSettings.zip?sv=2020-04-08&st=2021-10-14T00%3A10%3A28Z&se=2024-10-14T00%3A10%3A28Z&sr=b&sp=rl&sig=eXUvCx2C4gmYJWco%2FJsYzvi9YyM1%2BJDe7de5X3X3c8Y%3D",
-            "contentHash": "75ABA5CA341A7B5410217475AD39B1AE6DD6B2A08B3185B8A2D1252FB95B920B",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/TLSSchannelSettings.zip?sv=2020-04-08&st=2021-10-14T00%3A37%3A47Z&se=2024-10-14T00%3A37%3A47Z&sr=b&sp=rl&sig=RUNsd5iXWyvjdNVRKyyXO60oWkMuhMvnvfVoUcS%2BGUk%3D",
+            "contentHash": "9F3F16D4554EDB2E37ECD48BCFB0FD9DB2B4AA09B458A013BAA8A21B5F22A5AB",
             "configurationParameter": {}
           }
         },
         "parameters": {
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {

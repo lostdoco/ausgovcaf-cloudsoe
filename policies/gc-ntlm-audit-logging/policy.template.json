@@ -22,23 +22,23 @@
             "name": "NtlmAuditLogging",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/NtlmAuditLogging.zip?sv=2020-04-08&st=2021-10-14T00%3A09%3A32Z&se=2024-10-14T00%3A09%3A32Z&sr=b&sp=rl&sig=wm5zCkTuMQAOqEEKzGmuLaSOzUI4ntx3Hop58cOluaI%3D",
-            "contentHash": "C31CBB37DF9DB9AFADAEBB93FB366B0333E451B5F42F1672BA657FD13FB26B28",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/NtlmAuditLogging.zip?sv=2020-04-08&st=2021-10-14T00%3A36%3A29Z&se=2024-10-14T00%3A36%3A29Z&sr=b&sp=rl&sig=RtuM23SJgU9XgL%2Bs3eKUL6jHfeUUNVfNrs40M3KD3rE%3D",
+            "contentHash": "6982ECFD9F7ED9B18DF2C3D56298F4A18271CCCD9A82CBC776ADE367E401E4A2",
             "configurationParameter": {}
           }
         },
         "parameters": {
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {

@@ -22,23 +22,23 @@
             "name": "TLSAuditLogging",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/TLSAuditLogging.zip?sv=2020-04-08&st=2021-10-14T00%3A10%3A09Z&se=2024-10-14T00%3A10%3A09Z&sr=b&sp=rl&sig=DgoOWyZEnL97AxQn17djaIXoOn5DGF0p8E5uU084xpA%3D",
-            "contentHash": "32F1E085FD3559571ADF5E617CC6D4732001F2DCB9637EA4B79576B2185EF55A",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/TLSAuditLogging.zip?sv=2020-04-08&st=2021-10-14T00%3A37%3A26Z&se=2024-10-14T00%3A37%3A26Z&sr=b&sp=rl&sig=g%2FDj3x%2FnbWdPvlAUcS9zFP9rTnltOEAbjwB3gqrXy2s%3D",
+            "contentHash": "31CDA1A69D185C569F76D624856BDB4F29C5FAF4036BB02CE1FBEC03B2E0781E",
             "configurationParameter": {}
           }
         },
         "parameters": {
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {

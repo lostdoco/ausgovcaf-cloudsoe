@@ -22,23 +22,23 @@
             "name": "PowershellLogging",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/PowershellLogging.zip?sv=2020-04-08&st=2021-10-14T00%3A09%3A42Z&se=2024-10-14T00%3A09%3A42Z&sr=b&sp=rl&sig=4fBHq2kcIoJ1eLDstgCrVeibD1wYtWNRujNFufUTfsU%3D",
-            "contentHash": "DEEA673F2085F793B8139EEFC50D50F9B84E1C4EC6460E0FE7B1BB976AD31808",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/PowershellLogging.zip?sv=2020-04-08&st=2021-10-14T00%3A36%3A52Z&se=2024-10-14T00%3A36%3A52Z&sr=b&sp=rl&sig=oMA5H8H0TLRllN%2F8BGef17zpykgi2u9x7Obnt22TWi4%3D",
+            "contentHash": "7A78FD9F1CBAAA97EDEBBE2FEECE71FCA6FCA038640BEAB5FFF54E2FC9F8EA55",
             "configurationParameter": {}
           }
         },
         "parameters": {
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {

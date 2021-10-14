@@ -18,6 +18,7 @@ If ($PSVersionTable.PSVersion.Major -ne 7) {
     exit 1
 }
 
+
 #Get DSC configurations 
 $GcPolFilePath = Get-item $GcPolFilePathString
 $PSFiles = $GcPolFilePath.GetFiles("*.ps1")
@@ -41,6 +42,7 @@ $PSFiles | % {
 
         #Create guest configuration policy file
         New-GuestConfigurationPolicy `
+            -policyID (New-Guid).Guid `
             -ContentUri $ContentUri.ContentUri `
             -DisplayName $GcPolicyMetadata.DisplayName `
             -Description $GcPolicyMetadata.Description `

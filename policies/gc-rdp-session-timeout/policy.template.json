@@ -22,23 +22,23 @@
             "name": "RdpSessionTimeout",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/RdpSessionTimeout.zip?sv=2020-04-08&st=2021-10-14T00%3A10%3A01Z&se=2024-10-14T00%3A10%3A01Z&sr=b&sp=rl&sig=0BJkh2%2Be9l5YVauNjuTpilc5ZJJixk7wVzwe56NbwPA%3D",
-            "contentHash": "D9BD4383CEB10CC7921DE8596ECC1EBF61D04FEB77C75B75ADF643688ABF245B",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/RdpSessionTimeout.zip?sv=2020-04-08&st=2021-10-14T00%3A37%3A09Z&se=2024-10-14T00%3A37%3A09Z&sr=b&sp=rl&sig=PXt836VT96rHFsqMk3Ouv0b4BJ%2BzAngqezIZeLgmPfw%3D",
+            "contentHash": "62F68CB2B319A6FDFAC1F5EBFCEC1996FAC14CD3A07E0641EC642F3E6D6BD27A",
             "configurationParameter": {}
           }
         },
         "parameters": {
           "IncludeArcMachines": {
-            "Type": "String",
-            "Metadata": {
-              "DisplayName": "Include Arc connected servers",
-              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "type": "string",
+            "metadata": {
+              "displayName": "Include Arc connected servers",
+              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "AllowedValues": [
+            "allowedValues": [
               "True",
               "False"
             ],
-            "DefaultValue": "False"
+            "defaultValue": "False"
           }
         },
         "policyRule": {
