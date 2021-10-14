@@ -14,35 +14,31 @@
       "properties": {
         "displayName": "Audit installation of PowerShell v2",
         "policyType": "Custom",
-        "mode": "Indexed",
+        "mode": "All",
         "description": "Audit if PowerShell v2 is installed on the instance.",
         "metadata": {
-          "version": "1.0.0",
           "category": "Guest Configuration",
           "guestConfiguration": {
             "name": "PowershellV2",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/PowershellV2.zip?sv=2019-07-07&sr=b&sig=ug39Wwi79wIl2%2BQTESITNZnH8CmgD45wVi4mbXNh76c%3D&st=2021-08-24T13%3A30%3A09Z&se=2024-08-24T13%3A30%3A09Z&sp=rl",
-            "contentHash": "C766D47F54475F187AFC5C99D1E4465D2F54519EAA3A20AE47F1D237B3B63EBD",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/PowershellV2.zip?sv=2020-04-08&st=2021-10-14T00%3A09%3A51Z&se=2024-10-14T00%3A09%3A51Z&sr=b&sp=rl&sig=erOV%2BqWp%2F7c14V5WsP15mzG8iRBUdL2BaKnhIH6cbqc%3D",
+            "contentHash": "1DC2E7FC72942A3E1AB5F370BCED5191D7E839F3CA0C590384DBFE9939C9447B",
             "configurationParameter": {}
-          },
-          "requiredProviders": [
-            "Microsoft.GuestConfiguration"
-          ]
+          }
         },
         "parameters": {
           "IncludeArcMachines": {
-            "type": "string",
-            "metadata": {
-              "displayName": "Include Arc connected servers",
-              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "Type": "String",
+            "Metadata": {
+              "DisplayName": "Include Arc connected servers",
+              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "allowedValues": [
+            "AllowedValues": [
               "True",
               "False"
             ],
-            "defaultValue": "False"
+            "DefaultValue": "False"
           }
         },
         "policyRule": {
@@ -226,109 +222,17 @@
             ]
           },
           "then": {
-            "effect": "deployIfNotExists",
+            "effect": "auditIfNotExists",
             "details": {
               "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
               "name": "PowershellV2",
-              "roleDefinitionIds": [
-                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-              ],
               "existenceCondition": {
                 "allOf": [
-                  {
-                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/contentHash",
-                    "equals": "C766D47F54475F187AFC5C99D1E4465D2F54519EAA3A20AE47F1D237B3B63EBD"
-                  },
                   {
                     "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
                     "equals": "Compliant"
                   }
                 ]
-              },
-              "deployment": {
-                "properties": {
-                  "mode": "incremental",
-                  "parameters": {
-                    "vmName": {
-                      "value": "[field('name')]"
-                    },
-                    "location": {
-                      "value": "[field('location')]"
-                    },
-                    "type": {
-                      "value": "[field('type')]"
-                    },
-                    "configurationName": {
-                      "value": "PowershellV2"
-                    },
-                    "contentUri": {
-                      "value": "https://cloudsoegcpol.blob.core.windows.net/guest-config/PowershellV2.zip?sv=2019-07-07&sr=b&sig=ug39Wwi79wIl2%2BQTESITNZnH8CmgD45wVi4mbXNh76c%3D&st=2021-08-24T13%3A30%3A09Z&se=2024-08-24T13%3A30%3A09Z&sp=rl"
-                    },
-                    "contentHash": {
-                      "value": "C766D47F54475F187AFC5C99D1E4465D2F54519EAA3A20AE47F1D237B3B63EBD"
-                    }
-                  },
-                  "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {
-                      "vmName": {
-                        "type": "string"
-                      },
-                      "location": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "configurationName": {
-                        "type": "string"
-                      },
-                      "contentUri": {
-                        "type": "string"
-                      },
-                      "contentHash": {
-                        "type": "string"
-                      }
-                    },
-                    "resources": [
-                      {
-                        "condition": "[equals(toLower(parameters('type')), toLower('Microsoft.Compute/virtualMachines'))]",
-                        "apiVersion": "2018-11-20",
-                        "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
-                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
-                        "location": "[parameters('location')]",
-                        "properties": {
-                          "guestConfiguration": {
-                            "name": "[parameters('configurationName')]",
-                            "version": "1.0.0",
-                            "contentUri": "[parameters('contentUri')]",
-                            "contentHash": "[parameters('contentHash')]",
-                            "assignmentType": "ApplyAndMonitor",
-                            "configurationParameter": []
-                          }
-                        }
-                      },
-                      {
-                        "condition": "[equals(toLower(parameters('type')), toLower('microsoft.hybridcompute/machines'))]",
-                        "apiVersion": "2018-11-20",
-                        "type": "Microsoft.HybridCompute/machines/providers/guestConfigurationAssignments",
-                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
-                        "location": "[parameters('location')]",
-                        "properties": {
-                          "guestConfiguration": {
-                            "name": "[parameters('configurationName')]",
-                            "contentUri": "[parameters('contentUri')]",
-                            "contentHash": "[parameters('contentHash')]",
-                            "assignmentType": "ApplyAndMonitor",
-                            "version": "1.0.0",
-                            "configurationParameter": []
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
               }
             }
           }
@@ -338,8 +242,8 @@
   ],
   "outputs": {
     "policyDefinitionId": {
-      "type": "string",
-      "value": "[resourceId('Microsoft.Authorization/policyDefinitions',parameters('policyName'))]"
+      "value": "[resourceId('Microsoft.Authorization/policyDefinitions',parameters('policyName'))]",
+      "type": "string"
     }
   }
 }

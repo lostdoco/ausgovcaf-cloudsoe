@@ -14,35 +14,31 @@
       "properties": {
         "displayName": "GC - IPsec Audit Logging",
         "policyType": "Custom",
-        "mode": "Indexed",
+        "mode": "All",
         "description": "Sets Windows Advanced Audit Logging to capture IPsec subcategories.",
         "metadata": {
-          "version": "1.0.0",
           "category": "Guest Configuration",
           "guestConfiguration": {
             "name": "IPsecAuditLogging",
             "version": "1.0.0",
             "contentType": "Custom",
-            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/IPsecAuditLogging.zip?sv=2019-07-07&sr=b&sig=oSrNsaRpEoXCsq%2Bh%2FhQELN5CE6piGul75oOvPHF70CQ%3D&st=2021-08-24T13%3A29%3A17Z&se=2024-08-24T13%3A29%3A17Z&sp=rl",
-            "contentHash": "1CDE4403F86DAF6726D53D24584AB53C1F03BDE3E0241A0CE50179D2C4F44199",
+            "contentUri": "https://cloudsoegcpol.blob.core.windows.net/guest-config/IPsecAuditLogging.zip?sv=2020-04-08&st=2021-10-14T00%3A09%3A23Z&se=2024-10-14T00%3A09%3A23Z&sr=b&sp=rl&sig=RPy21sgeHbvRHMV2ZvkK347JMAwYz1N0ZJR%2Bqe3wX6Q%3D",
+            "contentHash": "24D0E0467B751C48048FC2BC6CDCE8713E13864BB231C40041A01ED9CE1DD0AB",
             "configurationParameter": {}
-          },
-          "requiredProviders": [
-            "Microsoft.GuestConfiguration"
-          ]
+          }
         },
         "parameters": {
           "IncludeArcMachines": {
-            "type": "string",
-            "metadata": {
-              "displayName": "Include Arc connected servers",
-              "description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
+            "Type": "String",
+            "Metadata": {
+              "DisplayName": "Include Arc connected servers",
+              "Description": "By selecting this option, you agree to be charged monthly per Arc connected machine."
             },
-            "allowedValues": [
+            "AllowedValues": [
               "True",
               "False"
             ],
-            "defaultValue": "False"
+            "DefaultValue": "False"
           }
         },
         "policyRule": {
@@ -226,109 +222,17 @@
             ]
           },
           "then": {
-            "effect": "deployIfNotExists",
+            "effect": "auditIfNotExists",
             "details": {
               "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
               "name": "IPsecAuditLogging",
-              "roleDefinitionIds": [
-                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-              ],
               "existenceCondition": {
                 "allOf": [
-                  {
-                    "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/contentHash",
-                    "equals": "1CDE4403F86DAF6726D53D24584AB53C1F03BDE3E0241A0CE50179D2C4F44199"
-                  },
                   {
                     "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
                     "equals": "Compliant"
                   }
                 ]
-              },
-              "deployment": {
-                "properties": {
-                  "mode": "incremental",
-                  "parameters": {
-                    "vmName": {
-                      "value": "[field('name')]"
-                    },
-                    "location": {
-                      "value": "[field('location')]"
-                    },
-                    "type": {
-                      "value": "[field('type')]"
-                    },
-                    "configurationName": {
-                      "value": "IPsecAuditLogging"
-                    },
-                    "contentUri": {
-                      "value": "https://cloudsoegcpol.blob.core.windows.net/guest-config/IPsecAuditLogging.zip?sv=2019-07-07&sr=b&sig=oSrNsaRpEoXCsq%2Bh%2FhQELN5CE6piGul75oOvPHF70CQ%3D&st=2021-08-24T13%3A29%3A17Z&se=2024-08-24T13%3A29%3A17Z&sp=rl"
-                    },
-                    "contentHash": {
-                      "value": "1CDE4403F86DAF6726D53D24584AB53C1F03BDE3E0241A0CE50179D2C4F44199"
-                    }
-                  },
-                  "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {
-                      "vmName": {
-                        "type": "string"
-                      },
-                      "location": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "configurationName": {
-                        "type": "string"
-                      },
-                      "contentUri": {
-                        "type": "string"
-                      },
-                      "contentHash": {
-                        "type": "string"
-                      }
-                    },
-                    "resources": [
-                      {
-                        "condition": "[equals(toLower(parameters('type')), toLower('Microsoft.Compute/virtualMachines'))]",
-                        "apiVersion": "2018-11-20",
-                        "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
-                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
-                        "location": "[parameters('location')]",
-                        "properties": {
-                          "guestConfiguration": {
-                            "name": "[parameters('configurationName')]",
-                            "version": "1.0.0",
-                            "contentUri": "[parameters('contentUri')]",
-                            "contentHash": "[parameters('contentHash')]",
-                            "assignmentType": "ApplyAndMonitor",
-                            "configurationParameter": []
-                          }
-                        }
-                      },
-                      {
-                        "condition": "[equals(toLower(parameters('type')), toLower('microsoft.hybridcompute/machines'))]",
-                        "apiVersion": "2018-11-20",
-                        "type": "Microsoft.HybridCompute/machines/providers/guestConfigurationAssignments",
-                        "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
-                        "location": "[parameters('location')]",
-                        "properties": {
-                          "guestConfiguration": {
-                            "name": "[parameters('configurationName')]",
-                            "contentUri": "[parameters('contentUri')]",
-                            "contentHash": "[parameters('contentHash')]",
-                            "assignmentType": "ApplyAndMonitor",
-                            "version": "1.0.0",
-                            "configurationParameter": []
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
               }
             }
           }
@@ -338,8 +242,8 @@
   ],
   "outputs": {
     "policyDefinitionId": {
-      "type": "string",
-      "value": "[resourceId('Microsoft.Authorization/policyDefinitions',parameters('policyName'))]"
+      "value": "[resourceId('Microsoft.Authorization/policyDefinitions',parameters('policyName'))]",
+      "type": "string"
     }
   }
 }
